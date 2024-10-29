@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Management System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .sidebar {
+            min-height: 100vh;
+            background-color: #fff;
+            border-right: 1px solid #e0e0e0;
+            position: fixed;
+            width: 250px;
+            padding-top: 20px;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .nav-link.active {
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+        .submenu .nav-link {
+            padding-left: 2rem;
+            font-size: 0.95rem;
+        }
+        .card-header {
+            background-color: #fff;
+            border-bottom: none;
+        }
+        .export-btn {
+            float: right;
+        }
+        .filter-select {
+            max-width: 200px;
+        }
+        .table-responsive {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .btn-custom {
+            background-color: #0d6efd;
+            color: #fff;
+        }
+        .btn-custom:hover {
+            background-color: #0b5ed7;
+            color: #fff;
+        }
+        .section-title {
+            margin-bottom: 20px;
+        }
+        .tooltip-inner {
+            max-width: 200px;
+            /* Max width of tooltip */
+            white-space: pre-wrap;
+            /* Allow line breaks */
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar p-3">
+            <h4 class="mb-4">Member Management</h4>
+            <ul class="nav flex-column">
+                <!-- Dashboard Link -->
+                <li class="nav-item mb-2">
+                    <a class="nav-link active" href="#dashboard" data-bs-toggle="tab" title="View summary metrics and key insights">
+                        <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                    </a>
+                </li>
+                <!-- Membership Level Definition -->
+                <li class="nav-item mb-2">
+                    <a class="nav-link" href="#membership" data-bs-toggle="tab" title="Define membership levels and rules">
+                        <i class="fas fa-layer-group me-2"></i> Membership Level Definition
+                    </a>
+                    <ul class="nav flex-column submenu">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#benefit-settings" data-bs-toggle="tab" title="Set benefits for each membership level">
+                                <i class="fas fa-gem me-2"></i> Benefit Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#level-rules" data-bs-toggle="tab" title="Define rules for leveling up or down">
+                                <i class="fas fa-balance-scale me-2"></i> Level Up/Down Rules
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#auto-adjust" data-bs-toggle="tab" title="Configure automatic level adjustments">
+                                <i class="fas fa-sync-alt me-2"></i> Automatic Level Adjustment
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- Member Information -->
+                <li class="nav-item mb-2">
+                    <a class="nav-link" href="#member-info" data-bs-toggle="tab" title="Manage member profiles and data">
+                        <i class="fas fa-users me-2"></i> Member Information
+                    </a>
+                    <ul class="nav flex-column submenu">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#profile-management" data-bs-toggle="tab" title="Edit and manage member profiles">
+                                <i class="fas fa-user-edit me-2"></i> Profile Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#purchase-history" data-bs-toggle="tab" title="View members' purchase and shipping history">
+                                <i class="fas fa-history me-2"></i> Purchase History
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#point-management" data-bs-toggle="tab" title="Manage points and rewards for members">
+                                <i class="fas fa-coins me-2"></i> Point/Reward Management
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- Member Segment Management -->
+                <li class="nav-item mb-2">
+                    <a class="nav-link" href="#segment-management" data-bs-toggle="tab" title="Create and manage member segments">
+                        <i class="fas fa-layer-group me-2"></i> Member Segment Management
+                    </a>
+                    <ul class="nav flex-column submenu">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#custom-segments" data-bs-toggle="tab" title="Create custom segments based on criteria">
+                                <i class="fas fa-sliders-h me-2"></i> Custom Segment Creation
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1 p-4">
+            <div class="tab-content">
+                <!-- Dashboard Tab -->
+                <div class="tab-pane fade show active" id="dashboard">
+                    <h3 class="section-title">Dashboard</h3>
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card text-white bg-primary mb-3">
+                                <div class="card-header"><i class="fas fa-users me-2"></i> Active Members</div>
+                                <div class="card-body">
+                                    <h5 class="card-title">5,678</h5>
+                                    <p class="card-text">Total active members across all levels.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-white bg-success mb-3">
+                                <div class="card-header"><i class="fas fa-shopping-cart me-2"></i> Average Spend</div>
+                                <div class="card-body">
+                                    <h5 class="card-title">$123.45</h5>
+                                    <p class="card-text">Average spend per member.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-white bg-warning mb-3">
+                                <div class="card-header"><i class="fas fa-coins me-2"></i> Points Earned</div>
+                                <div class="card-body">
+                                    <h5 class="card-title">45,678</h5>
+                                    <p class="card-text">Total points earned by members.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Analytics Charts -->
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i> Active Members by Level</h5>
+                                    <button class="btn btn-sm btn-custom"><i class="fas fa-download me-1"></i> Export Data</button>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="membersByLevelChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i> Average Spend per Segment</h5>
+                                    <button class="btn btn-sm btn-custom"><i class="fas fa-download me-1"></i> Export Data</button>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="averageSpendChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i> Points Earned vs Redeemed</h5>
+                                    <button class="btn btn-sm btn-custom"><i class="fas fa-download me-1"></i> Export Data</button>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="pointsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Membership Level Definition Tab -->
+                <div class="tab-pane fade" id="membership">
+                    <!-- Benefit Settings Sub-Tab -->
+                    <div class="tab-pane fade" id="benefit-settings">
+                        <h3 class="section-title">Benefit Settings</h3>
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-gem me-2"></i> Configure Benefits</h5>
+                                <button class="btn btn-sm btn-custom"><i class="fas fa-plus me-1"></i> Add Level</button>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Membership Level</th>
+                                            <th>Discount</th>
+                                            <th>Point Accrual Rate</th>
+                                            <th>Exclusive Services</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Silver</td>
+                                            <td>5% off</td>
+                                            <td>1 point per $1</td>
+                                            <td>Early access to sales</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit Benefits"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Delete Level"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Gold</td>
+                                            <td>10% off</td>
+                                            <td>1.5 points per $1</td>
+                                            <td>Free shipping, Exclusive offers</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit Benefits"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Delete Level"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Platinum</td>
+                                            <td>15% off</td>
+                                            <td>2 points per $1</td>
+                                            <td>Personal shopper, VIP support</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit Benefits"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Delete Level"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <!-- Add more rows as needed -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Level Up/Down Rules Sub-Tab -->
+                    <div class="tab-pane fade" id="level-rules">
+                        <h3 class="section-title">Level Up/Down Rules</h3>
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-balance-scale me-2"></i> Define Level Rules</h5>
+                                <button class="btn btn-sm btn-custom"><i class="fas fa-plus me-1"></i> Add Rule</button>
+                            </div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="row mb-3">
+                                        <div class="col-md-3">
+                                            <label class="form-label">Membership Level</label>
+                                            <select class="form-select">
+                                                <option selected>Silver</option>
+                                                <option value="1">Gold</option>
+                                                <option value="2">Platinum</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Purchase Amount ($)</label>
+                                            <input type="number" class="form-control" placeholder="e.g., 500">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Purchase Frequency</label>
+                                            <input type="number" class="form-control" placeholder="e.g., 10 times">
+                                        </div>
+                                        <div class="col-md-3 d-flex align-items-end">
+                                            <button type="submit" class="btn btn-primary">Save Rule</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <h6>Current Level Rules:</h6>
+                                <ul>
+                                    <li>Silver to Gold: $500 total spend or 10 purchases within 6 months.</li>
+                                    <li>Gold to Platinum: $1,000 total spend or 25 purchases within 12 months.</li>
+                                    <li>Platinum to Gold: Drop below $800 total spend within 12 months.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Automatic Level Adjustment Sub-Tab -->
+                    <div class="tab-pane fade" id="auto-adjust">
+                        <h3 class="section-title">Automatic Level Adjustment</h3>
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-sync-alt me-2"></i> Configure Automatic Adjustments</h5>
+                                <button class="btn btn-sm btn-custom"><i class="fas fa-cog me-1"></i> Settings</button>
+                            </div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="autoRecalculation">
+                                        <label class="form-check-label" for="autoRecalculation">Enable Automatic Recalculations</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="autoNotifications">
+                                        <label class="form-check-label" for="autoNotifications">Enable Automatic Notifications to Members</label>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Member Information Tab -->
+                <div class="tab-pane fade" id="member-info">
+                    <!-- Profile Management Sub-Tab -->
+                    <div class="tab-pane fade" id="profile-management">
+                        <h3 class="section-title">Profile Management</h3>
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-user-edit me-2"></i> Manage Profiles</h5>
+                                <button class="btn btn-sm btn-custom"><i class="fas fa-plus me-1"></i> Add Member</button>
+                            </div>
+                            <div class="card-body table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Member ID</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Membership Level</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>MEM001</td>
+                                            <td>Nguyen Van A</td>
+                                            <td>nguyenvana@example.com</td>
+                                            <td>Gold</td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit Profile"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Delete Member"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>MEM002</td>
+                                            <td>Le Thi B</td>
+                                            <td>lethib@example.com</td>
+                                            <td>Silver</td>
+                                            <td><span class="badge bg-warning">Inactive</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit Profile"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Delete Member"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <!-- Add more rows as needed -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Purchase History Sub-Tab -->
+                    <div class="tab-pane fade" id="purchase-history">
+                        <h3 class="section-title">Purchase History</h3>
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-history me-2"></i> Member Purchase History</h5>
+                                <button class="btn btn-sm btn-custom"><i class="fas fa-download me-1"></i> Export Data</button>
+                            </div>
+                            <div class="card-body table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Member ID</th>
+                                            <th>Product</th>
+                                            <th>Amount ($)</th>
+                                            <th>Status</th>
+                                            <th>Shipping Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>ORD1001</td>
+                                            <td>MEM001</td>
+                                            <td>Lipstick XYZ</td>
+                                            <td>30.00</td>
+                                            <td><span class="badge bg-success">Completed</span></td>
+                                            <td><span class="badge bg-info">Shipped</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>ORD1002</td>
+                                            <td>MEM002</td>
+                                            <td>Foundation ABC</td>
+                                            <td>45.50</td>
+                                            <td><span class="badge bg-warning">Pending</span></td>
+                                            <td><span class="badge bg-secondary">Not Shipped</span></td>
+                                        </tr>
+                                        <!-- Add more rows as needed -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Point/Reward Management Sub-Tab -->
+                    <div class="tab-pane fade" id="point-management">
+                        <h3 class="section-title">Point/Reward Management</h3>
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-coins me-2"></i> Manage Points</h5>
+                                <button class="btn btn-sm btn-custom"><i class="fas fa-plus me-1"></i> Add Adjustment</button>
+                            </div>
+                            <div class="card-body table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Member ID</th>
+                                            <th>Points Earned</th>
+                                            <th>Points Redeemed</th>
+                                            <th>Points Expiration</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>MEM001</td>
+                                            <td>1,200</td>
+                                            <td>300</td>
+                                            <td>2025-01-01</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Adjust Points"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Delete Adjustment"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>MEM002</td>
+                                            <td>800</td>
+                                            <td>150</td>
+                                            <td>2024-12-15</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Adjust Points"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Delete Adjustment"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <!-- Add more rows as needed -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Member Segment Management Tab -->
+                <div class="tab-pane fade" id="segment-management">
+                    <!-- Custom Segment Creation Sub-Tab -->
+                    <div class="tab-pane fade" id="custom-segments">
+                        <h3 class="section-title">Custom Segment Creation</h3>
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-sliders-h me-2"></i> Create New Segment</h5>
+                                <button class="btn btn-sm btn-custom"><i class="fas fa-plus me-1"></i> Add Segment</button>
+                            </div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Segment Name</label>
+                                            <input type="text" class="form-control" placeholder="e.g., High Spenders">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Criteria</label>
+                                            <select class="form-select">
+                                                <option selected>Purchase Patterns</option>
+                                                <option value="1">Interests</option>
+                                                <option value="2">Visit Frequency</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 d-flex align-items-end">
+                                            <button type="submit" class="btn btn-primary">Create Segment</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <h6>Existing Segments:</h6>
+                                <ul>
+                                    <li>High Spenders: Members who spend over $500 annually.</li>
+                                    <li>Frequent Visitors: Members who visit the site more than 20 times a month.</li>
+                                    <li>Interested in Skincare: Members who frequently purchase skincare products.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Segments Table -->
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-layer-group me-2"></i> Manage Segments</h5>
+                                <button class="btn btn-sm btn-custom"><i class="fas fa-download me-1"></i> Export Data</button>
+                            </div>
+                            <div class="card-body table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Segment Name</th>
+                                            <th>Criteria</th>
+                                            <th>Number of Members</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>High Spenders</td>
+                                            <td>Spend > $500/year</td>
+                                            <td>1,200</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit Segment"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Delete Segment"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Frequent Visitors</td>
+                                            <td>Visits > 20/month</td>
+                                            <td>3,400</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit Segment"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Delete Segment"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <!-- Add more rows as needed -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Reward Program Tab -->
+                <div class="tab-pane fade" id="reward">
+                    <!-- Point Accrual Rules Sub-Tab -->
+                    <div class="tab-pane fade" id="point-rules">
+                        <h3 class="section-title">Point Accrual Rules</h3>
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-coins me-2"></i> Configure Point Accrual</h5>
+                                <button class="btn btn-sm btn-custom"><i class="fas fa-plus me-1"></i> Add Rule</button>
+                            </div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Action</label>
+                                            <select class="form-select">
+                                                <option selected>Purchase</option>
+                                                <option value="1">Event Participation</option>
+                                                <option value="2">Referral</option>
+                                                <option value="3">Social Sharing</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Points Earned</label>
+                                            <input type="number" class="form-control" placeholder="e.g., 10">
+                                        </div>
+                                        <div class="col-md-4 d-flex align-items-end">
+                                            <button type="submit" class="btn btn-primary">Save Rule</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <h6>Current Point Rules:</h6>
+                                <ul>
+                                    <li>Purchase: 1 point per $1 spent.</li>
+                                    <li>Event Participation: 50 points per event.</li>
+                                    <li>Referral: 100 points per successful referral.</li>
+                                    <li>Social Sharing: 20 points per share.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Point Accrual Statistics Chart -->
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i> Point Accrual Statistics</h5>
+                                <button class="btn btn-sm btn-custom"><i class="fas fa-download me-1"></i> Export Data</button>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="pointAccrualStatsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Custom Segment Creation Sub-Tab -->
+                <!-- Already included under Member Segment Management -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Initialize Tooltips -->
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+    <!-- Chart.js Initialization -->
+    <script>
+        // Dashboard Charts
+        // Active Members by Level Chart
+        const membersByLevelCtx = document.getElementById('membersByLevelChart').getContext('2d');
+        const membersByLevelChart = new Chart(membersByLevelCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Silver', 'Gold', 'Platinum'],
+                datasets: [{
+                    data: [3000, 2000, 678],
+                    backgroundColor: ['#6c757d', '#0d6efd', '#ffc107'],
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: { enabled: true }
+                }
+            }
+        });
+
+        // Average Spend per Segment Chart
+        const averageSpendCtx = document.getElementById('averageSpendChart').getContext('2d');
+        const averageSpendChart = new Chart(averageSpendCtx, {
+            type: 'bar',
+            data: {
+                labels: ['High Spenders', 'Frequent Visitors', 'Interested in Skincare'],
+                datasets: [{
+                    label: 'Average Spend ($)',
+                    data: [350, 150, 200],
+                    backgroundColor: ['#0d6efd', '#198754', '#dc3545'],
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Points Earned vs Redeemed Chart
+        const pointsCtx = document.getElementById('pointsChart').getContext('2d');
+        const pointsChart = new Chart(pointsCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Points Earned', 'Points Redeemed'],
+                datasets: [{
+                    data: [45678, 12345],
+                    backgroundColor: ['#0d6efd', '#dc3545'],
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: { enabled: true }
+                }
+            }
+        });
+
+        // Point Accrual Statistics Chart
+        const pointAccrualStatsCtx = document.getElementById('pointAccrualStatsChart').getContext('2d');
+        const pointAccrualStatsChart = new Chart(pointAccrualStatsCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Purchase', 'Event Participation', 'Referral', 'Social Sharing'],
+                datasets: [{
+                    label: 'Points',
+                    data: [12000, 5000, 10000, 3000],
+                    backgroundColor: ['#0d6efd', '#198754', '#dc3545', '#ffc107'],
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
